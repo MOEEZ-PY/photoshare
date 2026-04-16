@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>PhotoShare</title>
+  <link rel="stylesheet" href="/css/styles.css"/>
+</head>
+<body class="insta-body">
+
+<div class="ps-layout">
+
+  <!-- ── LEFT SIDEBAR (desktop) ────────────────────────────────── -->
+  <aside class="ps-sidebar">
+    <div class="ps-logo">PhotoShare</div>
+
+    <nav class="ps-nav" id="ps-nav">
+      <button class="ps-nav-item active" data-tab="home">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        <span>Home</span>
+      </button>
+      <button class="ps-nav-item" data-tab="search">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <span>Search</span>
+      </button>
+      <button class="ps-nav-item" data-tab="reels">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="2"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+        <span>Reels</span>
+      </button>
+      <button class="ps-nav-item" data-tab="notif">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <span>Notifications</span>
+        <span class="ps-nav-badge" id="ps-notif-badge" style="display:none">0</span>
+      </button>
+      <button class="ps-nav-item" data-tab="profile">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span>Profile</span>
+      </button>
+    </nav>
+
+    <div class="ps-sidebar-user" id="ps-sidebar-user">
+      <div class="ps-sidebar-av" id="ps-sidebar-av"></div>
+      <div>
+        <div class="ps-sidebar-name" id="ps-sidebar-name"></div>
+        <div class="ps-sidebar-handle" id="ps-sidebar-handle"></div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ── MAIN FEED ──────────────────────────────────────────────── -->
+  <main class="ps-main">
+
+    <!-- Feed view -->
+    <div id="feed-view">
+      <div class="stories-row" id="stories-row"></div>
+      <div id="posts-list"></div>
+      <div id="feed-loading" class="insta-loading" style="display:none"><div class="spinner"></div></div>
+      <div id="empty-state" style="display:none;text-align:center;padding:3rem 1rem;color:#555">
+        <div style="font-size:2.5rem;margin-bottom:.75rem">🖼️</div>
+        <div style="font-weight:600;color:#888;margin-bottom:.3rem">No posts yet</div>
+        <div style="font-size:.85rem">Check back later.</div>
+      </div>
+      <div id="scroll-sentinel" style="height:1px"></div>
+    </div>
+
+    <!-- Search view -->
+    <div id="search-view" style="display:none;padding:.85rem 0 1rem">
+      <div class="insta-search-box">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2.5" style="flex-shrink:0"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input class="insta-search-input" type="search" id="search-q" placeholder="Search photos &amp; videos…"/>
+      </div>
+      <div style="display:flex;gap:.5rem;margin-top:.5rem">
+        <input class="insta-search-input insta-search-sub" type="text" id="search-location" placeholder="📍 Location"/>
+        <input class="insta-search-input insta-search-sub" type="text" id="search-person" placeholder="👤 Person"/>
+      </div>
+      <div style="display:flex;gap:.5rem;margin-top:.5rem">
+        <button class="insta-search-btn" id="search-btn">Search</button>
+        <button class="insta-search-btn ghost" id="clear-btn">Clear</button>
+      </div>
+      <div id="search-results" style="margin-top:.5rem"></div>
+      <div id="search-loading" class="insta-loading" style="display:none"><div class="spinner"></div></div>
+    </div>
+
+    <!-- Reels (videos only) view -->
+    <div id="reels-view" style="display:none">
+      <div id="reels-list"></div>
+      <div id="reels-loading" class="insta-loading" style="display:none"><div class="spinner"></div></div>
+      <div id="reels-empty" style="display:none;text-align:center;padding:3rem 1rem;color:#555">
+        <div style="font-size:2.5rem;margin-bottom:.75rem">🎬</div>
+        <div style="font-weight:600;color:#888">No videos yet</div>
+      </div>
+      <div id="reels-sentinel" style="height:1px"></div>
+    </div>
+
+    <!-- Notifications view -->
+    <div id="notif-view" style="display:none">
+      <div class="ps-section-title">Notifications</div>
+      <div id="nv-list"></div>
+      <div id="nv-loading" class="insta-loading" style="display:none"><div class="spinner"></div></div>
+      <div id="nv-empty" style="display:none;text-align:center;padding:2rem;color:#555;font-size:.88rem">No notifications yet.</div>
+      <button class="notif-load-more" id="nv-load-more" style="display:none">Load more</button>
+    </div>
+
+    <!-- Profile view -->
+    <div id="profile-view" style="display:none;padding:2.5rem 0">
+      <div class="ps-section-title">Profile</div>
+      <div style="text-align:center;margin-bottom:1.75rem">
+        <div class="pv-av" id="pv-av"></div>
+        <div id="pv-name" style="font-weight:700;font-size:1.1rem;color:#fff;margin-bottom:.25rem"></div>
+        <div id="pv-handle" style="color:#666;font-size:.86rem"></div>
+      </div>
+
+      <div class="pv-form" id="pv-form">
+        <div class="pv-field">
+          <label class="pv-label">Display Name</label>
+          <input class="pv-input" id="pv-edit-name" type="text" maxlength="60" placeholder="Your name"/>
+        </div>
+        <div class="pv-field">
+          <label class="pv-label">Bio</label>
+          <textarea class="pv-input pv-textarea" id="pv-edit-bio" maxlength="200" rows="3" placeholder="Tell people about yourself…"></textarea>
+        </div>
+        <div class="pv-field">
+          <label class="pv-label">Location</label>
+          <input class="pv-input" id="pv-edit-location" type="text" maxlength="80" placeholder="City, Country"/>
+        </div>
+        <div style="display:flex;gap:.75rem;margin-top:1.25rem">
+          <button class="pv-save-btn" id="pv-save-btn" onclick="saveProfile()">Save Changes</button>
+          <button onclick="authHelpers.logout()" class="pv-signout">Sign Out</button>
+        </div>
+        <div id="pv-alert" class="pv-alert" style="display:none"></div>
+        <div id="pv-success" class="pv-success" style="display:none">Profile updated!</div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ── RIGHT PANEL (desktop) ──────────────────────────────────── -->
+  <aside class="ps-right" id="ps-right">
+    <!-- Current user -->
+    <div class="ps-right-user" id="ps-right-user">
+      <div class="ps-right-av" id="ps-right-av"></div>
+      <div style="flex:1;min-width:0">
+        <div class="ps-right-name" id="ps-right-name"></div>
+        <div class="ps-right-handle" id="ps-right-handle"></div>
+      </div>
+      <button onclick="authHelpers.logout()" class="ps-switch-btn">Sign out</button>
+    </div>
+
+    <!-- Suggested -->
+    <div class="ps-suggested-header">
+      <span>Suggested for you</span>
+      <a href="#" class="ps-see-all" onclick="return false">See All</a>
+    </div>
+    <div id="ps-suggested"></div>
+
+    <!-- Footer links -->
+    <div class="ps-footer">
+      About · Help · Privacy · Terms
+      <div style="margin-top:6px;color:#333">© 2026 PhotoShare</div>
+    </div>
+  </aside>
+
+</div>
+
+<!-- ── MOBILE BOTTOM NAV ──────────────────────────────────────── -->
+<nav class="insta-bottom-nav" id="mobile-nav">
+  <button class="insta-nav-btn active" data-tab="home">
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+  </button>
+  <button class="insta-nav-btn" data-tab="search">
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+  </button>
+  <button class="insta-nav-btn" data-tab="reels">
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="2"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+  </button>
+  <button class="insta-nav-btn" data-tab="notif">
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+  </button>
+  <button class="insta-nav-btn" data-tab="profile">
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+  </button>
+</nav>
+
+<!-- AI Analysis Modal -->
+<div class="ai-modal-overlay" id="ai-modal" onclick="this.classList.remove('open')">
+  <div class="ai-modal-box" onclick="event.stopPropagation()">
+    <div class="ai-modal-header">
+      <span>✨ AI Description</span>
+      <button class="ai-modal-close" onclick="document.getElementById('ai-modal').classList.remove('open')">✕</button>
+    </div>
+    <div id="ai-spinner" class="ai-spinner" style="display:none"><div class="spinner"></div><span>Analyzing image…</span></div>
+    <p id="ai-error" class="ai-error" style="display:none"></p>
+    <p id="ai-body" class="ai-body"></p>
+  </div>
+</div>
+
+<script src="/js/api.js"></script>
+<script src="/js/auth.js"></script>
+<script src="/js/consumer.js"></script>
+</body>
+</html>

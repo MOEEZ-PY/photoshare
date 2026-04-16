@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>PhotoShare — Profile</title>
+  <link rel="stylesheet" href="/css/styles.css"/>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <a href="/consumer.html" class="navbar-brand">
+        <div class="logo-mark">📸</div>
+        <div class="logo-name">Photo<span>Share</span></div>
+      </a>
+      <div class="navbar-actions">
+        <a href="/consumer.html" class="btn btn-ghost btn-sm">← Feed</a>
+        <span class="user-pill" id="user-name-nav"></span>
+        <button class="btn btn-ghost btn-sm" onclick="authHelpers.logout()">Sign Out</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Profile header -->
+  <div class="profile-section" id="profile-section" style="display:none">
+    <div class="profile-inner">
+      <div class="profile-head">
+        <div class="profile-av" id="profile-av">?</div>
+        <div class="profile-info">
+          <div class="profile-name" id="profile-name">—</div>
+          <div class="profile-handle" id="profile-handle">@—</div>
+          <div class="profile-stats">
+            <div>
+              <div class="pstat-num" id="stat-total">—</div>
+              <div class="pstat-label">Posts</div>
+            </div>
+            <div>
+              <div class="pstat-num" id="stat-comments">—</div>
+              <div class="pstat-label">Comments</div>
+            </div>
+            <div>
+              <div class="pstat-num" id="stat-avg">—</div>
+              <div class="pstat-label">Avg Rating</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Grid -->
+  <div class="container" style="padding-top:1.5rem;padding-bottom:3rem">
+    <div id="table-loading" class="loading-row"><div class="spinner"></div></div>
+    <div class="ig-grid" id="ig-grid"></div>
+    <div id="table-empty" class="empty" style="display:none">
+      <div class="empty-icon">📭</div>
+      <h3>No posts yet</h3>
+      <p>This creator hasn't shared anything yet.</p>
+    </div>
+  </div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/profile.js"></script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>PhotoShare — Post</title>
+  <link rel="stylesheet" href="/css/styles.css"/>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <a href="/consumer.html" class="navbar-brand">
+        <div class="logo-mark">📸</div>
+        <div class="logo-name">Photo<span>Share</span></div>
+      </a>
+      <div class="navbar-actions">
+        <a href="/consumer.html" class="btn btn-ghost btn-sm">← Back</a>
+        <span class="user-pill" id="user-name"></span>
+        <button class="btn btn-ghost btn-sm" onclick="authHelpers.logout()">Sign Out</button>
+      </div>
+    </div>
+  </nav>
+  <div class="detail-wrap" id="media-detail">
+    <div class="loading-row"><div class="spinner"></div><span>Loading…</span></div>
+  </div>
+  <script src="/js/api.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/media.js"></script>
+</body>
+</html>

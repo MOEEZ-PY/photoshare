@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>PhotoShare — Sign In</title>
+  <link rel="stylesheet" href="/css/styles.css"/>
+</head>
+<body>
+<div class="auth-wrap">
+  <div class="auth-left">
+    <div class="auth-left-content">
+      <div class="auth-brand-logo">📸</div>
+      <h1 class="auth-brand-name">Photo<span>Share</span></h1>
+      <p class="auth-tagline">Discover beautiful photos and videos from creators around the world.</p>
+      <div class="auth-dots">
+        <div class="auth-dot active"></div>
+        <div class="auth-dot"></div>
+        <div class="auth-dot"></div>
+      </div>
+    </div>
+  </div>
+  <div class="auth-right">
+    <div class="auth-form-wrap">
+      <h2>Welcome back</h2>
+      <p class="auth-sub">Sign in to continue to PhotoShare</p>
+
+      <div id="alert" class="alert alert-error" style="display:none">
+        <span class="alert-icon">⚠</span>
+        <span id="alert-msg"></span>
+      </div>
+
+      <form id="login-form">
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input class="form-control" type="text" id="username" placeholder="your_username" autocomplete="username" required/>
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input class="form-control" type="password" id="password" placeholder="••••••••" autocomplete="current-password" required/>
+        </div>
+        <button class="btn btn-primary btn-lg" type="submit" style="width:100%;margin-top:.35rem" id="login-btn">Sign In</button>
+      </form>
+
+      <p class="auth-footer-text">New here? <a href="/register.html">Create a free account</a></p>
+    </div>
+  </div>
+</div>
+<script src="/js/api.js"></script>
+<script src="/js/auth.js"></script>
+<script>
+  redirectIfLoggedIn();
+  document.getElementById('login-form').addEventListener('submit', async e => {
+    e.preventDefault();
+    const alertBox = document.getElementById('alert');
+    const alertMsg = document.getElementById('alert-msg');
+    const btn = document.getElementById('login-btn');
+    alertBox.style.display = 'none';
+    btn.disabled = true; btn.textContent = 'Signing in…';
+    try {
+      const user = await authHelpers.login(
+        document.getElementById('username').value.trim(),
+        document.getElementById('password').value
+      );
+      window.location.href = user.role === 'creator' ? '/creator.html' : '/consumer.html';
+    } catch(err) {
+      alertMsg.textContent = err.message || 'Login failed.';
+      alertBox.style.display = 'flex';
+      btn.disabled = false; btn.textContent = 'Sign In';
+    }
+  });
+</script>
+</body>
+</html>
