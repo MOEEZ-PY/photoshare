@@ -61,7 +61,7 @@ app.use((err, req, res, next) => {
 // ─── Start ────────────────────────────────────────────────────────────────────
 
 app.listen(config.PORT, () => {
-  console.log(`[server] PhotoShare backend listening on port ${config.PORT} (${config.NODE_ENV})`);
+  console.log(`[server] PhotoBazaar backend listening on port ${config.PORT} (${config.NODE_ENV})`);
 });
 
 module.exports = app;

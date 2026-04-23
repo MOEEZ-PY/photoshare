@@ -18,7 +18,7 @@ const config = {
   PORT: parseInt(optional('PORT', '3000'), 10),
   JWT_SECRET: required('JWT_SECRET'),
   JWT_EXPIRES_IN: optional('JWT_EXPIRES_IN', '24h'),
-  DB_PATH: optional('DB_PATH', './data/photoshare.db'),
+  DB_PATH: optional('DB_PATH', './data/photobazaar.db'),
   UPLOAD_DIR: optional('UPLOAD_DIR', './uploads'),
   MAX_PHOTO_SIZE_MB: parseInt(optional('MAX_PHOTO_SIZE_MB', '10'), 10),
   MAX_VIDEO_SIZE_MB: parseInt(optional('MAX_VIDEO_SIZE_MB', '100'), 10),
@@ -29,13 +29,13 @@ const config = {
       JSON.stringify([
         {
           username: 'creator1',
-          email: 'creator1@photoshare.app',
+          email: 'creator1@photobazaar.app',
           password: 'Creator@123',
           display_name: 'Creator One',
         },
         {
           username: 'creator2',
-          email: 'creator2@photoshare.app',
+          email: 'creator2@photobazaar.app',
           password: 'Creator@456',
           display_name: 'Creator Two',
         },

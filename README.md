@@ -1,4 +1,4 @@
-# 📸 PhotoShare
+# 📸 PhotoBazaar
 
 A full-stack photo & video sharing platform with separate **Creator** and **Consumer** experiences, built with Node.js, Express, SQLite, and vanilla HTML/CSS/JS — containerised with Docker.
 
@@ -39,8 +39,8 @@ A full-stack photo & video sharing platform with separate **Creator** and **Cons
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/MOEEZ-PY/photoshare.git
-cd photoshare
+git clone https://github.com/MOEEZ-PY/photobazaar.git
+cd photobazaar
 ```
 
 ### 2. Configure environment
@@ -68,7 +68,7 @@ The app will be available at **http://localhost**
 ## Project Structure
 
 ```
-photoshare/
+photobazaar/
 ├── backend/
 │   └── src/
 │       ├── routes/
@@ -111,7 +111,7 @@ photoshare/
 | `NODE_ENV`         | `production`             | Node environment                   |
 | `PORT`             | `3000`                   | Backend port (internal)            |
 | `JWT_EXPIRES_IN`   | `24h`                    | Token expiry duration              |
-| `DB_PATH`          | `./data/photoshare.db`   | SQLite database file path          |
+| `DB_PATH`          | `./data/photobazaar.db`   | SQLite database file path          |
 | `UPLOAD_DIR`       | `./uploads`              | Media upload directory             |
 | `MAX_PHOTO_SIZE_MB`| `10`                     | Max photo upload size              |
 | `MAX_VIDEO_SIZE_MB`| `100`                    | Max video upload size              |

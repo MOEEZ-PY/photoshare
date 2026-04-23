@@ -1,7 +1,7 @@
 {
-  "name": "photoshare-backend",
+  "name": "photobazaar-backend",
   "version": "1.0.0",
-  "description": "PhotoShare REST API backend",
+  "description": "PhotoBazaar REST API backend",
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",

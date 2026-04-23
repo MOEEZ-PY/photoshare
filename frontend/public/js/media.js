@@ -106,7 +106,7 @@ async function loadPage() {
       api.get(`/media/${mediaId}`),
       api.get(`/media/${mediaId}/ratings`),
     ]);
-    document.title = `PhotoShare — ${item.title}`;
+    document.title = `PhotoBazaar — ${item.title}`;
     const isVid    = item.type === 'video';
     const creator  = item.creator_display_name || item.creator_username;
     const mediaEl  = isVid

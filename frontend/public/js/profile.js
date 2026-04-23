@@ -80,7 +80,7 @@ async function loadProfile() {
       })(),
     ]);
 
-    document.title = `PhotoShare — ${creator.display_name || creator.username}`;
+    document.title = `PhotoBazaar — ${creator.display_name || creator.username}`;
     document.getElementById('profile-av').textContent     = initial(creator.display_name || creator.username);
     document.getElementById('profile-name').textContent   = creator.display_name || creator.username;
     document.getElementById('profile-handle').textContent = '@' + creator.username;
