@@ -26,9 +26,9 @@ async function login(username, password) {
   return data.user;
 }
 
-async function register(username, email, password, displayName) {
+async function register(username, email, password, displayName, role) {
   const data = await api.post('/auth/register', {
-    username, email, password, display_name: displayName,
+    username, email, password, display_name: displayName, role,
   });
   setSession(data.token, data.user);
   return data.user;

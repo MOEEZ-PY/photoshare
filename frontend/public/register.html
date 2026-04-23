@@ -5,8 +5,10 @@
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <title>PhotoShare — Create Account</title>
   <link rel="stylesheet" href="/css/styles.css"/>
+  <script src="/js/theme.js"></script>
 </head>
 <body>
+<button class="theme-toggle-btn" onclick="toggleTheme()" title="Light mode" style="position:fixed;top:1rem;right:1rem;z-index:999;font-size:1.3rem;background:var(--surface-2);border:1px solid var(--border-2);border-radius:var(--r-md);padding:6px 10px">☀️</button>
 <div class="auth-wrap">
   <div class="auth-left">
     <div class="auth-left-content">
@@ -31,6 +33,20 @@
       </div>
 
       <form id="register-form">
+        <div class="form-group" style="margin-bottom:1.1rem">
+          <label style="display:block;margin-bottom:.55rem;font-size:.8rem;text-transform:uppercase;letter-spacing:.07em;color:var(--text-2)">Account Type</label>
+          <div id="role-toggle" style="display:flex;gap:.6rem">
+            <button type="button" class="role-btn active" data-role="consumer"
+              style="flex:1;padding:.65rem .5rem;border-radius:var(--r-md);border:1.5px solid var(--primary);background:rgba(139,92,246,.15);color:var(--primary-2);font-size:.9rem;font-weight:600;cursor:pointer;transition:all var(--t)">
+              👤 User
+            </button>
+            <button type="button" class="role-btn" data-role="creator"
+              style="flex:1;padding:.65rem .5rem;border-radius:var(--r-md);border:1.5px solid var(--border-2);background:transparent;color:var(--text-2);font-size:.9rem;font-weight:600;cursor:pointer;transition:all var(--t)">
+              🎨 Creator
+            </button>
+          </div>
+          <input type="hidden" id="role" value="consumer"/>
+        </div>
         <div class="form-group">
           <label for="display_name">Display Name</label>
           <input class="form-control" type="text" id="display_name" placeholder="Jane Doe" required/>
@@ -58,6 +74,21 @@
 <script src="/js/auth.js"></script>
 <script>
   redirectIfLoggedIn();
+
+  // Role toggle
+  document.getElementById('role-toggle').addEventListener('click', e => {
+    const btn = e.target.closest('.role-btn');
+    if (!btn) return;
+    document.querySelectorAll('.role-btn').forEach(b => {
+      const isActive = b === btn;
+      b.classList.toggle('active', isActive);
+      b.style.borderColor = isActive ? 'var(--primary)' : 'var(--border-2)';
+      b.style.background  = isActive ? 'rgba(139,92,246,.15)' : 'transparent';
+      b.style.color       = isActive ? 'var(--primary-2)' : 'var(--text-2)';
+    });
+    document.getElementById('role').value = btn.dataset.role;
+  });
+
   document.getElementById('register-form').addEventListener('submit', async e => {
     e.preventDefault();
     const alertBox = document.getElementById('alert');
@@ -66,13 +97,15 @@
     alertBox.style.display = 'none';
     btn.disabled = true; btn.textContent = 'Creating account…';
     try {
-      await authHelpers.register(
+      const role = document.getElementById('role').value;
+      const user = await authHelpers.register(
         document.getElementById('username').value.trim(),
         document.getElementById('email').value.trim(),
         document.getElementById('password').value,
-        document.getElementById('display_name').value.trim()
+        document.getElementById('display_name').value.trim(),
+        role
       );
-      window.location.href = '/consumer.html';
+      window.location.href = user.role === 'creator' ? '/creator.html' : '/consumer.html';
     } catch(err) {
       alertMsg.textContent = err.message || 'Registration failed.';
       alertBox.style.display = 'flex';

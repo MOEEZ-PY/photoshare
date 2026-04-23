@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <title>PhotoShare</title>
   <link rel="stylesheet" href="/css/styles.css"/>
+  <script src="/js/theme.js"></script>
 </head>
 <body class="insta-body">
 
@@ -37,6 +38,10 @@
         <span>Profile</span>
       </button>
     </nav>
+
+    <button class="ps-nav-item theme-toggle-btn" onclick="toggleTheme()" title="Light mode" style="font-size:1rem;gap:.85rem;justify-content:flex-start;width:100%;padding:.75rem">
+      ☀️ <span style="font-size:.95rem;font-weight:500">Theme</span>
+    </button>
 
     <div class="ps-sidebar-user" id="ps-sidebar-user">
       <div class="ps-sidebar-av" id="ps-sidebar-av"></div>
@@ -123,9 +128,10 @@
           <label class="pv-label">Location</label>
           <input class="pv-input" id="pv-edit-location" type="text" maxlength="80" placeholder="City, Country"/>
         </div>
-        <div style="display:flex;gap:.75rem;margin-top:1.25rem">
+        <div style="display:flex;gap:.75rem;margin-top:1.25rem;flex-wrap:wrap">
           <button class="pv-save-btn" id="pv-save-btn" onclick="saveProfile()">Save Changes</button>
           <button onclick="authHelpers.logout()" class="pv-signout">Sign Out</button>
+          <button class="theme-toggle-btn pv-signout" onclick="toggleTheme()" title="Light mode" style="font-size:1.1rem">☀️</button>
         </div>
         <div id="pv-alert" class="pv-alert" style="display:none"></div>
         <div id="pv-success" class="pv-success" style="display:none">Profile updated!</div>

@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <title>PhotoShare — Post</title>
   <link rel="stylesheet" href="/css/styles.css"/>
+  <script src="/js/theme.js"></script>
 </head>
 <body>
   <nav class="navbar">
@@ -16,6 +17,7 @@
       <div class="navbar-actions">
         <a href="/consumer.html" class="btn btn-ghost btn-sm">← Back</a>
         <span class="user-pill" id="user-name"></span>
+        <button class="theme-toggle-btn" onclick="toggleTheme()" title="Light mode">☀️</button>
         <button class="btn btn-ghost btn-sm" onclick="authHelpers.logout()">Sign Out</button>
       </div>
     </div>

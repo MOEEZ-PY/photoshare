@@ -38,9 +38,9 @@ router.post('/login', (req, res) => {
   res.json({ ok: true, data: { token: makeToken(user), user: safeUser(user) } });
 });
 
-// POST /api/auth/register  (consumers only)
+// POST /api/auth/register
 router.post('/register', (req, res) => {
-  const { username, email, password, display_name } = req.body || {};
+  const { username, email, password, display_name, role } = req.body || {};
   if (!username || !email || !password || !display_name) {
     return res.status(400).json({ ok: false, error: { code: 'BAD_REQUEST', message: 'username, email, password, display_name required.' } });
   }
@@ -48,6 +48,8 @@ router.post('/register', (req, res) => {
   if (password.length < 8) {
     return res.status(400).json({ ok: false, error: { code: 'WEAK_PASSWORD', message: 'Password must be at least 8 characters.' } });
   }
+
+  const resolvedRole = role === 'creator' ? 'creator' : 'consumer';
 
   const existing = db.prepare('SELECT id FROM users WHERE username = ? OR email = ?').get(username, email);
   if (existing) {
@@ -59,7 +61,7 @@ router.post('/register', (req, res) => {
     username,
     email,
     password_hash: bcrypt.hashSync(password, 12),
-    role: 'consumer', // hardcoded; creators cannot self-register
+    role: resolvedRole,
     display_name,
     created_at: Date.now(),
   };
