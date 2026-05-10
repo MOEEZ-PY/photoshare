@@ -14,20 +14,16 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      id-token: write
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Login to Azure
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_BFDF828E90494A26A554E7E5515FB5B6 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_A439C536434B43B19D94C081F3A9A6B3 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_0382F676C4C2428995A162493545AB8E }}
-
       - name: Login to Azure Container Registry
-        run: az acr login --name ${{ secrets.ACR_NAME }}
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ secrets.ACR_NAME }}.azurecr.io
+          username: ${{ secrets.ACR_NAME }}
+          password: ${{ secrets.ACR_PASSWORD }}
 
       - name: Build and push backend image
         run: |
@@ -51,18 +47,10 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     permissions:
-      id-token: write
       contents: read
 
     steps:
       - uses: actions/checkout@v4
-
-      - name: Login to Azure
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_BFDF828E90494A26A554E7E5515FB5B6 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_A439C536434B43B19D94C081F3A9A6B3 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_0382F676C4C2428995A162493545AB8E }}
 
       - name: Generate deployment compose from template
         env:
@@ -76,4 +64,5 @@ jobs:
         with:
           app-name: 'PhotoBazaar'
           slot-name: 'Production'
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
           configuration-file: docker-compose.deploy.yml
