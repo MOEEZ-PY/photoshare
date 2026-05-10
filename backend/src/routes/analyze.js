@@ -1,10 +1,10 @@
 'use strict';
 
 const express = require('express');
-const fs = require('fs');
 const path = require('path');
 const db = require('../db/database');
 const { requireAuth } = require('../middleware/auth');
+const { readFileAsBase64 } = require('../utils/upload');
 const config = require('../config');
 
 const router = express.Router();
@@ -35,14 +35,15 @@ router.post('/:id/analyze', requireAuth, async (req, res) => {
     return res.status(422).json({ ok: false, error: { code: 'NOT_IMAGE', message: 'AI analysis is only available for images.' } });
   }
 
-  const filePath = path.join(config.UPLOAD_DIR, row.filename);
-  if (!fs.existsSync(filePath)) {
-    return res.status(404).json({ ok: false, error: { code: 'FILE_NOT_FOUND', message: 'Image file not found on disk.' } });
+  let base64;
+  try {
+    base64 = await readFileAsBase64(row.filename);
+  } catch {
+    return res.status(404).json({ ok: false, error: { code: 'FILE_NOT_FOUND', message: 'Image file not found.' } });
   }
 
   const ext = path.extname(row.filename).toLowerCase();
   const mediaType = MIME_MAP[ext] || 'image/jpeg';
-  const base64 = fs.readFileSync(filePath).toString('base64');
 
   try {
     const response = await fetch('https://api.anthropic.com/v1/messages', {

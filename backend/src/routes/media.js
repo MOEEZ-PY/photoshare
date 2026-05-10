@@ -6,7 +6,7 @@ const fs = require('fs');
 const { v4: uuidv4 } = require('uuid');
 const db = require('../db/database');
 const { optionalAuth, requireAuth, requireCreator } = require('../middleware/auth');
-const { mediaUpload } = require('../utils/upload');
+const { mediaUpload, saveFile, deleteFile, mediaUrl, useAzure } = require('../utils/upload');
 const config = require('../config');
 
 const router = express.Router();
@@ -22,6 +22,7 @@ function enrichMedia(row) {
   return {
     ...row,
     people: (() => { try { return JSON.parse(row.people); } catch { return []; } })(),
+    url: mediaUrl(row.filename),
   };
 }
 
@@ -54,7 +55,6 @@ router.get('/search', optionalAuth, (req, res) => {
 
   let rows;
   if (ftsQuery || person) {
-    // Use FTS — person filter done via JSON search in people column
     const ftsFilter = ftsQuery || '*';
     if (person) {
       rows = db.prepare(`
@@ -167,7 +167,7 @@ router.get('/:id', optionalAuth, (req, res) => {
 
 // POST /api/media  (creator only)
 router.post('/', requireAuth, requireCreator, (req, res, next) => {
-  mediaUpload.single('file')(req, res, (err) => {
+  mediaUpload.single('file')(req, res, async (err) => {
     if (err) {
       if (err.code === 'LIMIT_FILE_SIZE') {
         return res.status(413).json({ ok: false, error: { code: 'FILE_TOO_LARGE', message: 'File exceeds size limit.' } });
@@ -183,15 +183,16 @@ router.post('/', requireAuth, requireCreator, (req, res, next) => {
     }
 
     const { title, caption = '', location = '', people = '[]' } = req.body || {};
+
+    // Validate before uploading to storage
     if (!title) {
-      fs.unlink(req.file.path, () => {});
+      if (!useAzure && req.file.path) fs.unlink(req.file.path, () => {});
       return res.status(400).json({ ok: false, error: { code: 'BAD_REQUEST', message: 'title is required.' } });
     }
 
-    // Validate photo size
     const type = mediaType(req.file.mimetype);
     if (type === 'photo' && req.file.size > config.MAX_PHOTO_SIZE_MB * 1024 * 1024) {
-      fs.unlink(req.file.path, () => {});
+      if (!useAzure && req.file.path) fs.unlink(req.file.path, () => {});
       return res.status(413).json({ ok: false, error: { code: 'FILE_TOO_LARGE', message: `Photos must be under ${config.MAX_PHOTO_SIZE_MB} MB.` } });
     }
 
@@ -202,15 +203,20 @@ router.post('/', requireAuth, requireCreator, (req, res, next) => {
       parsedPeople = '[]';
     }
 
-    // Build relative filename from absolute path
-    const relFilename = path.relative(config.UPLOAD_DIR, req.file.path).replace(/\\/g, '/');
+    let filename;
+    try {
+      filename = await saveFile(req.file);
+    } catch (storageErr) {
+      if (!useAzure && req.file.path) fs.unlink(req.file.path, () => {});
+      return next(storageErr);
+    }
 
     const now = Date.now();
     const item = {
       id: uuidv4(),
       creator_id: req.user.sub,
       type,
-      filename: relFilename,
+      filename,
       original_name: req.file.originalname,
       mime_type: req.file.mimetype,
       file_size: req.file.size,
@@ -269,21 +275,21 @@ router.put('/:id', requireAuth, requireCreator, (req, res) => {
 });
 
 // DELETE /api/media/:id  (creator, own items — soft delete)
-router.delete('/:id', requireAuth, requireCreator, (req, res) => {
-  const item = db.prepare('SELECT * FROM media WHERE id = ? AND deleted_at IS NULL').get(req.params.id);
-  if (!item) return res.status(404).json({ ok: false, error: { code: 'NOT_FOUND', message: 'Media not found.' } });
-  if (item.creator_id !== req.user.sub) {
-    return res.status(403).json({ ok: false, error: { code: 'FORBIDDEN', message: 'Not your media.' } });
-  }
-
-  db.prepare('UPDATE media SET deleted_at = ? WHERE id = ?').run(Date.now(), item.id);
-
-  // Best-effort physical delete
+router.delete('/:id', requireAuth, requireCreator, async (req, res, next) => {
   try {
-    fs.unlink(path.join(config.UPLOAD_DIR, item.filename), () => {});
-  } catch {}
+    const item = db.prepare('SELECT * FROM media WHERE id = ? AND deleted_at IS NULL').get(req.params.id);
+    if (!item) return res.status(404).json({ ok: false, error: { code: 'NOT_FOUND', message: 'Media not found.' } });
+    if (item.creator_id !== req.user.sub) {
+      return res.status(403).json({ ok: false, error: { code: 'FORBIDDEN', message: 'Not your media.' } });
+    }
 
-  res.json({ ok: true, data: { deleted: true } });
+    db.prepare('UPDATE media SET deleted_at = ? WHERE id = ?').run(Date.now(), item.id);
+    await deleteFile(item.filename).catch(() => {});
+
+    res.json({ ok: true, data: { deleted: true } });
+  } catch (err) {
+    next(err);
+  }
 });
 
 module.exports = router;

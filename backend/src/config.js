@@ -23,6 +23,8 @@ const config = {
   MAX_PHOTO_SIZE_MB: parseInt(optional('MAX_PHOTO_SIZE_MB', '10'), 10),
   MAX_VIDEO_SIZE_MB: parseInt(optional('MAX_VIDEO_SIZE_MB', '100'), 10),
   ANTHROPIC_API_KEY: optional('ANTHROPIC_API_KEY', ''),
+  AZURE_STORAGE_CONNECTION_STRING: optional('AZURE_STORAGE_CONNECTION_STRING', ''),
+  AZURE_STORAGE_CONTAINER_NAME: optional('AZURE_STORAGE_CONTAINER_NAME', 'uploads'),
   SEED_CREATORS: (() => {
     const raw = optional(
       'SEED_CREATORS',

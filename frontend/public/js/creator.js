@@ -47,7 +47,7 @@ function renderGrid() {
     post.id = `post-${item.id}`;
 
     const isVid = item.type === 'video';
-    const src   = `/uploads/${escapeHtml(item.filename)}`;
+    const src   = escapeHtml(item.url);
     const thumb = isVid
       ? `<video src="${src}" muted preload="metadata"></video>`
       : `<img src="${src}" alt="${escapeHtml(item.title)}" loading="lazy"/>`;
@@ -276,8 +276,8 @@ function renderNotif(n) {
     ? `<strong>${escapeHtml(actor)}</strong> liked your post`
     : `<strong>${escapeHtml(actor)}</strong> commented on your post`;
   const thumb = n.media_type === 'video'
-    ? `<video src="/uploads/${escapeHtml(n.media_filename)}" muted preload="metadata" class="notif-thumb"></video>`
-    : `<img src="/uploads/${escapeHtml(n.media_filename)}" class="notif-thumb" alt=""/>`;
+    ? `<video src="${escapeHtml(n.media_url)}" muted preload="metadata" class="notif-thumb"></video>`
+    : `<img src="${escapeHtml(n.media_url)}" class="notif-thumb" alt=""/>`;
 
   const div = document.createElement('div');
   div.className = 'notif-item' + (n.read_at ? '' : ' unread');

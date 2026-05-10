@@ -3,6 +3,7 @@
 const express = require('express');
 const db      = require('../db/database');
 const { requireAuth, requireCreator } = require('../middleware/auth');
+const { mediaUrl } = require('../utils/upload');
 
 const router = express.Router();
 
@@ -28,7 +29,7 @@ router.get('/', requireAuth, requireCreator, (req, res) => {
     LIMIT ?
   `).all(req.user.sub, beforeTs, lim);
 
-  res.json({ ok: true, data: rows });
+  res.json({ ok: true, data: rows.map(row => ({ ...row, media_url: mediaUrl(row.media_filename) })) });
 });
 
 // GET /api/notifications/unread-count

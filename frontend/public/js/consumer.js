@@ -170,7 +170,7 @@ function renderSuggested(items) {
 // ── Post card ─────────────────────────────────────────────────────────────────
 function renderPost(post) {
   const isVid   = post.type === 'video';
-  const src     = `/uploads/${escapeHtml(post.filename)}`;
+  const src     = escapeHtml(post.url);
   const creator = post.creator_display_name || post.creator_username;
   const col     = avatarColor(post.creator_id);
   const isLiked = likedPosts.has(post.id);
@@ -373,8 +373,8 @@ function renderNvItem(n) {
     ? `<strong>${escapeHtml(actor)}</strong> liked your post`
     : `<strong>${escapeHtml(actor)}</strong> commented on your post`;
   const thumb = n.media_type === 'video'
-    ? `<video src="/uploads/${escapeHtml(n.media_filename)}" muted preload="metadata" class="notif-thumb"></video>`
-    : `<img src="/uploads/${escapeHtml(n.media_filename)}" class="notif-thumb" alt=""/>`;
+    ? `<video src="${escapeHtml(n.media_url)}" muted preload="metadata" class="notif-thumb"></video>`
+    : `<img src="${escapeHtml(n.media_url)}" class="notif-thumb" alt=""/>`;
   const div = document.createElement('div');
   div.className = 'notif-item' + (n.read_at ? '' : ' unread');
   div.onclick = () => window.location.href = `/media.html?id=${escapeHtml(n.media_id)}`;
