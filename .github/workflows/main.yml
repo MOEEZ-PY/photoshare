@@ -1,0 +1,47 @@
+name: Build and deploy Docker app to Azure Container Apps - PhotoBazaar
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+env:
+  ACR_REGISTRY: ${{ secrets.ACR_NAME }}.azurecr.io
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Login to Azure Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ secrets.ACR_NAME }}.azurecr.io
+          username: ${{ secrets.ACR_NAME }}
+          password: ${{ secrets.ACR_PASSWORD }}
+
+      - name: Build and push backend image
+        run: |
+          docker build \
+            -t ${{ env.ACR_REGISTRY }}/photobazaar-backend:${{ github.sha }} \
+            -t ${{ env.ACR_REGISTRY }}/photobazaar-backend:latest \
+            ./backend
+          docker push ${{ env.ACR_REGISTRY }}/photobazaar-backend:${{ github.sha }}
+          docker push ${{ env.ACR_REGISTRY }}/photobazaar-backend:latest
+
+      - name: Build and push frontend image
+        run: |
+          docker build \
+            -t ${{ env.ACR_REGISTRY }}/photobazaar-frontend:${{ github.sha }} \
+            -t ${{ env.ACR_REGISTRY }}/photobazaar-frontend:latest \
+            ./frontend
+          docker push ${{ env.ACR_REGISTRY }}/photobazaar-frontend:${{ github.sha }}
+          docker push ${{ env.ACR_REGISTRY }}/photobazaar-frontend:latest
+
+  # Deployment via ACR webhook — when :latest images are pushed to ACR,
+  # Azure Container Apps automatically pulls and restarts containers.
