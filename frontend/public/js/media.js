@@ -110,8 +110,8 @@ async function loadPage() {
     const isVid    = item.type === 'video';
     const creator  = item.creator_display_name || item.creator_username;
     const mediaEl  = isVid
-      ? `<video controls src="${escapeHtml(item.url)}"></video>`
-      : `<img src="${escapeHtml(item.url)}" alt="${escapeHtml(item.title)}"/>`;
+      ? `<video controls src="${escapeHtml(item.url || `/uploads/${item.filename}`)}"></video>`
+      : `<img src="${escapeHtml(item.url || `/uploads/${item.filename}`)}" alt="${escapeHtml(item.title)}"/>`;
 
     const peopleTags = Array.isArray(item.people) && item.people.length
       ? item.people.map(p => `<span class="tag">👤 ${escapeHtml(p)}</span>`).join('')
